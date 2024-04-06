@@ -48,11 +48,15 @@ const register = async (req, res, next) => {
       OTP: crypto.randomBytes(32).toString("hex"),
     }).save();
 
-    console.log("OTP:", otp); // Log the OTP object to check if it's generated correctly
+    // console.log("OTP:", otp); // Log the OTP object to check if it's generated correctly
 
     const url = `${process.env.CLIENT_URL}/users/${newUser._id}/verify/${otp.OTP}`;
 
-    await sendEmail(newUser.email, "Verify your email", url);
+    await sendEmail(
+      newUser.email,
+      "Verify your email",
+      `Hello ${newUser.name},\n\nThank you for signing up with Joastech. To complete your registration and verify your email address, please click the link below:\n\n${url}\n\nIf you did not request this verification, you can safely ignore this email.\n\nThank you,\nJoastech Team`
+    );
 
     res.status(201).json({ message: "An email sent to your email" });
   } catch (error) {
